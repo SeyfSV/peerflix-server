@@ -2,8 +2,8 @@
 
 var stats = require('./stats');
 
-module.exports = function (server) {
-  var io = require('socket.io').listen(server),
+module.exports = function (server, opts) {
+  var io = require('socket.io').listen(server, opts),
     _ = require('lodash'),
     progress = require('./progressbar'),
     store = require('./store');

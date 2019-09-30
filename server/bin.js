@@ -9,12 +9,12 @@ var express = require('express'),
   serveStatic = require('serve-static'),
   socket = require('./socket'),
   api = require('./')
-    .use(serveStatic(path.join(__dirname, '../dist'), STATIC_OPTIONS))
-    .use(serveStatic(path.join(__dirname, '../.tmp'), STATIC_OPTIONS))
-    .use(serveStatic(path.join(__dirname, '../app'), STATIC_OPTIONS));
+  .use(serveStatic(path.join(__dirname, '../dist'), STATIC_OPTIONS))
+  .use(serveStatic(path.join(__dirname, '../.tmp'), STATIC_OPTIONS))
+  .use(serveStatic(path.join(__dirname, '../app'), STATIC_OPTIONS));
 
 var server = http.createServer(api);
-socket(server);
+socket(server, {transports: 'pooling'});
 var port = process.env.PORT || 9000;
 
 server.listen(port).on('error', function (e) {
