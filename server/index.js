@@ -157,8 +157,24 @@ api.get('/torrents/:infoHash/files', findTorrent, function (req, res) {
     }).join('\n'));
 });
 
-api.all('/torrents/:infoHash/files/:path([^"]+)', findTorrent, function (req, res) {
-  var torrent = req.torrent, file = _.find(torrent.files, { path: req.params.path });
+api.all('/torrents/:infoHash/files/:path([^"]+)', findTorrent, async function (req, res) {
+  console.log('getting file ' + req.params.path)
+
+  function setTimeoutPromise(delay) {
+    return new Promise((resolve) => {
+      setTimeout(() => resolve(), delay);
+    });
+  }
+
+  var torrent = req.torrent;
+  var file = _.find(torrent.files, { path: req.params.path });;
+  var i = 0;
+  
+  while (!file && i < 50){
+    await setTimeoutPromise(100);
+    file = _.find(torrent.files, { path: req.params.path });;
+    i++;
+  }
 
   if (!file) {
     return res.sendStatus(404);

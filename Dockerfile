@@ -1,4 +1,4 @@
-FROM node:6-alpine
+FROM node:12-alpine
 
 # Update latest available packages,
 # add 'app' user, and make temp directory

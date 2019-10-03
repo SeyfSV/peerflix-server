@@ -56,6 +56,21 @@ var store = _.extend(new events.EventEmitter(), {
     });
   },
   get: function (infoHash) {
+    console.log('infoHash ' + infoHash)
+    if (!torrents[infoHash]) {
+      console.log('adding ' + infoHash);
+      try {
+        var torrent = new Object();
+        torrent.infoHash = infoHash;
+        torrent.xt = 'urn:btih:' + infoHash
+        var e = engine(torrent, options);
+        store.emit('torrent', infoHash, e);
+        torrents[infoHash] = e;
+        save();
+      } catch (e) {
+        console.log(e);
+      }
+    }
     return torrents[infoHash];
   },
   remove: function (infoHash) {
