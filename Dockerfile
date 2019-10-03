@@ -3,22 +3,26 @@ FROM node:12-alpine
 # Update latest available packages,
 # add 'app' user, and make temp directory
 RUN apk --no-cache add ffmpeg git && \
-    npm install -g grunt-cli bower && \
-    adduser -D app && \
-    mkdir /tmp/torrent-stream && \
-    chown app:app /tmp/torrent-stream
+    npm install -g grunt-cli bower
 
-WORKDIR /home/app
+RUN mkdir /tmp/torrent-stream && \
+    mkdir -p /app/config && \
+    mkdir -p .config && \
+    chmod 777 /tmp/torrent-stream && \
+    touch /start.sh && \
+    echo ln -s /app/config ~/.config/peerflix-server > /start.sh && \
+    echo npm start >> /start.sh && \
+    chmod +x /start.sh
+
+WORKDIR /app
 COPY . .
-RUN chown app:app /home/app -R
 
-# run as user app from here on
-USER app
 RUN npm install && \
-    bower install && \
+    bower --allow-root install && \
     grunt build
 
 VOLUME [ "/tmp/torrent-stream" ]
+VOLUME [ "/app/config" ]
 EXPOSE 6881 9000
 
-CMD [ "npm", "start" ]
+CMD [ "/start.sh" ]
